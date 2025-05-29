@@ -28,7 +28,6 @@ jobs:
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
-        if: github.event_name == 'workflow_dispatch' || !startsWith(github.event.ref, 'refs/tags/v')
         with:
           images: |
             ghcr.io/qjoly/oidc-coffee-example
@@ -50,4 +49,3 @@ jobs:
           push: true
           file: Dockerfile
           tags: ghcr.io/qjoly/oidc-coffee-example:dev
-          
