@@ -1,0 +1,76 @@
+#######################################
+# Here is an example of how to deploy the OIDC Coffee Example application
+# Notice that I didn't make it easily configurable like an helm chart
+# Also ensure that the URL in the OIDC_ISSUER_URL environment variable matches the URL in the Ingress
+#######################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oidc-coffee-example
+  labels:
+    app: oidc-coffee-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oidc-coffee-example
+  template:
+    metadata:
+      labels:
+        app: oidc-coffee-example
+    spec:
+      containers:
+        - name: oidc-coffee-example
+          imagePullPolicy: Always
+          image: ghcr.io/qjoly/oidc-coffee-example-go:dev
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          env:
+            - name: OIDC_ISSUER_URL
+              value: "https://oidc.mocha.thoughtless.eu"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oidc-coffee-example
+  labels:
+    app: oidc-coffee-example
+spec:
+  type: ClusterIP
+  selector:
+    app: oidc-coffee-example
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oidc-coffee-example
+  annotations:
+    cert-manager.io/cluster-issuer: "cloudflare"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - oidc.mocha.thoughtless.eu
+      secretName: oidc-coffee-example-tls
+  rules:
+    - host: oidc.mocha.thoughtless.eu
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: oidc-coffee-example
+                port:
+                  number: 80
