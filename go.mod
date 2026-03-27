@@ -1,11 +1,11 @@
 module github.com/qjoly/k8s-oidc-password-login
 
-go 1.23.3
+go 1.25.0
 
 require github.com/golang-jwt/jwt/v5 v5.3.0
 
 require (
-	golang.org/x/crypto v0.38.0
+	golang.org/x/crypto v0.49.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
