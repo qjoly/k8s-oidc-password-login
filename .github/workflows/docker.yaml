@@ -33,7 +33,7 @@ jobs:
             ghcr.io/qjoly/oidc-coffee-example
 
       - name: Build and push - Release
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if:  startsWith(github.event.ref, 'refs/tags/v')
         with:
           context: .
@@ -42,7 +42,7 @@ jobs:
           tags: ${{steps.meta.outputs.tags}}
         
       - name: Build and push - Dev
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if:  github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/')
         with:
           context: .
